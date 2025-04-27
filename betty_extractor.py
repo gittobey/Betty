@@ -128,7 +128,7 @@ try:
     password_field = wait.until(
         EC.presence_of_element_located((By.CSS_SELECTOR, "input[autocomplete='current-password']"))
     )
-    username_field.send_keys("")  # ✍️ Replace with your username
+    password_field.send_keys("")  # ✍️ Replace with your password
 
     print("[+] Entered password!")
 
