@@ -3,6 +3,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
 import time
 import os
 import re
@@ -96,51 +98,101 @@ if ensure_chromedriver():
     chrome_options.add_experimental_option("prefs", prefs)
 
     driver = webdriver.Chrome(options=chrome_options)
-else:
-    print("Something went wrong. Exiting.")
 
+def element_exists(driver, by, value, timeout=10):
+    try:
+        WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
+        print (f"{value} exists!")
+        return True
+    except TimeoutException:
+        print (f"{value} doesn't exist!")
+        return False
+
+
+def click_if_exists(driver, by, value, timeout=10):
+    if element_exists(driver, by, value, timeout):
+        element = driver.find_element(by, value)
+        element.click()
+        print(f"{value} clicked!")
+    else:
+        print(f"{value} not found!")
 
 driver.get("https://sports.bet9ja.com/mobile/login")
-# try:
-#     # 🚀 Smart wait up to 15 seconds for an element (example: wait for the top menu to load)
-#     wait = WebDriverWait(driver, 15)
-#     menu_element = wait.until(
-#         EC.presence_of_element_located((By.CSS_SELECTOR, "div.menu"))  # Replace selector as needed
-#     )
+driver.maximize_window()
+wait = WebDriverWait(driver, 15)
 
-#     print("[+] Menu loaded successfully!")
-
-# except Exception as e:
-#     print(f"[-] Something went wrong during smart wait: {e}")
+# 1️⃣ Wait for username field and type in username
+username_field = wait.until(
+    EC.presence_of_element_located((By.CSS_SELECTOR, "input[autocomplete='username']"))
+)
+username_field.send_keys("Bet9jaweb8")  # ✍️ Replace with your username
+print("[+] Entered username!")
 
 
-try:
-    wait = WebDriverWait(driver, 15)
-
-    # 1️⃣ Wait for username field and type in username
-    username_field = wait.until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, "input[autocomplete='username']"))
-    )
-    username_field.send_keys("Bet9jaweb8")  # ✍️ Replace with your username
-
-    print("[+] Entered username!")
-
-    password_field = wait.until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, "input[autocomplete='current-password']"))
-    )
-    password_field.send_keys("")  # ✍️ Replace with your password
-
-    print("[+] Entered password!")
-
-    # 2️⃣ Wait for login button and click it
-    login_button = wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.w-full.mt15"))
-    )
-    login_button.click()
-
-    print("[+] Clicked login button!")
-
-except Exception as e:
-    print(f"[-] Something went wrong: {e}")
+password_field = wait.until(
+    EC.presence_of_element_located((By.CSS_SELECTOR, "input[autocomplete='current-password']"))
+)
+password_field.send_keys("Newpassword1")  # ✍️ Replace with your password
+print("[+] Entered password!")
 
 
+# 2️⃣ Wait for login button and click it
+login_button = wait.until(
+    EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.w-full.mt15"))
+)
+login_button.click()
+print("[+] Clicked login button!")
+
+
+# Wait until the element is clickable
+span = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="iconslider_1549_league_element"]/div/div[1]/span')))
+# Click the span
+span.click()
+print("[+] Clicked virtual league button!")
+
+
+# Wait until the image is clickable
+premier_league = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'select_premier')))
+# Click the image
+premier_league.click()
+print("[+] Clicked Premier league button!")
+
+
+
+# Wait for iframe
+iframe = wait.until(
+    EC.presence_of_element_located((By.TAG_NAME, "iframe"))
+)
+# Switch into iframe
+driver.switch_to.frame(iframe)
+# Find and click the menu button
+element = wait.until(
+    EC.element_to_be_clickable((By.CLASS_NAME, "icon-menu"))
+)
+driver.execute_script("arguments[0].click();", element)
+print("[+] Menu button clicked!")
+
+# (Optional) Switch back to main page tested and wasn't needed for the webpage
+#driver.switch_to.default_content()
+
+
+result_bttn = wait.until(EC.element_to_be_clickable((By.ID, 'a_bet_results')))
+result_bttn.click()
+
+#click to bet
+bet_bttn = wait.until(EC.element_to_be_clickable((By.ID, 'a_bet_bet')))
+bet_bttn.click()
+
+# Usage example:
+# click_if_exists(driver, By.CLASS_NAME, 'fa fa-bars icon-menu') #click
+
+
+
+
+# 🖐️ Keep browser open until user types 'exit'
+while True:
+    command = input("Type 'exit' to close the browser: ").strip().lower()
+    if command == "exit":
+        print("[*] Exiting and closing the browser...")
+        driver.quit()
+        break
