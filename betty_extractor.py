@@ -110,8 +110,8 @@ driver.get("https://sports.bet9ja.com/mobile/login")
 
 #     print("[+] Menu loaded successfully!")
 
-except Exception as e:
-    print(f"[-] Something went wrong during smart wait: {e}")
+# except Exception as e:
+#     print(f"[-] Something went wrong during smart wait: {e}")
 
 
 try:
