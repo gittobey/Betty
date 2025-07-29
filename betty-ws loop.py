@@ -1,3 +1,6 @@
+"""This also has an attempt to """
+
+
 import asyncio
 import base64
 import json
@@ -184,11 +187,11 @@ async def send_payloads():
         # === Send S1 ===
         s1_payload = f"cmd=begin;clientid=;domain=Comm.ts;s=NaN;ts={get_timestamp()};xs={get_xs()}"
         await websocket.send(encode_payload(s1_payload))
-        print(f"Sent S1: {s1_payload}")
+        print(f"Sent S1: ")
 
         r1 = await websocket.recv()
         r1_decoded = decode_payload(r1)
-        print(f"Received R1: {r1_decoded}")
+        print(f"Received R1: \n")
 
         # === Extract clientid ===
         clientid = ""
@@ -206,10 +209,10 @@ async def send_payloads():
             f"clientid={clientid};domain=Comm.ts;s=NaN;ts={get_timestamp()};xs={get_xs()}"
         )
         await websocket.send(encode_payload(s2_payload))
-        print(f"Sent S2: {s2_payload}")
+        print(f"Sent S2: ")
 
         r2 = await websocket.recv()
-        print(f"Received R2: {decode_payload(r2)}")
+        print(f"Received R2: \n")
 
         # === Send S3 ===
         p = "2b4063bed18197c832c932681124894d" #changes with time,usually expires gotten from headers to vsmobile
@@ -222,7 +225,7 @@ async def send_payloads():
         print(f"Sent S3: ")
 
         r3 = await websocket.recv()
-        print(f"Received R3: ")
+        print(f"Received R3: \n")
 
         # === Send S4/tss ===
         s4_payload = (
@@ -246,7 +249,7 @@ async def send_payloads():
         await websocket.send(encode_payload(s5_payload))
         print(f"Sent S5 (on_evda data) {time.strftime('%H:%M:%S')}")
         r5 = await websocket.recv()
-        print(f"Received R5: ")
+        print(f"Received R5: \n")
         #payload = extract_onevda_data(r5) #extract live odds for the game eid
         decoded5 = base64.b64decode(r5).decode()
         eid, start = extract_eid_and_start(decoded5)
@@ -254,23 +257,23 @@ async def send_payloads():
         #     json.dump(extract_onevda_data(str(r5)), f, indent=4)
         # parsed_onevda_data = extract_onevda_data(str(r5))
         time2wait = int(start)-time.time()
-        print(f"EID: {eid}, START: {start}")
-        print(f"time to wait: {time2wait}s")
+        print(f"EID: {eid}, START: {start} time to wait: {time2wait}s \n")
+
 
         # === Send S6 ===
         s6_payload = (
             f"cmd=ot2;l=20;c=1;pid=14001,14003,14011,14012,14014,14015,14016,14017;ft=0;ftt=0;clientid={clientid};domain=Comm.ts;s=NaN;ts={get_timestamp()};xs={get_xs()}"
         )
         await websocket.send(encode_payload(s6_payload))
-        print(f"Sent S6 (ot2): {s6_payload}")
+        print(f"Sent S6 (ot2): ")
         r6 = await websocket.recv()
-        print(f"Received R6: {time.strftime('%H:%M:%S')}")
+        print(f"Received R6: \n")
 
         # Assume S6 has already been sent/received above
 
         # Calculate time2wait from R5 earlier
         time2wait = int(start) - time.time() +7
-        print(f"Time to wait after S6: {time2wait:.2f}s")
+        print(f"Time to wait after S6: {time2wait:.2f}s \n")
 
         #Keep sending S4 if time2wait > 30s
         while time2wait > 30:
@@ -278,9 +281,9 @@ async def send_payloads():
                 f"cmd=tss;clientid={clientid};domain=Comm.ts;s=NaN;ts={get_timestamp()};xs={get_xs()}"
             )
             await websocket.send(encode_payload(s4_payload))
-            print(f"Sent S4/tss : {s4_payload}")
+            print(f"Sent S4/tss : ")
             r4 = await websocket.recv()
-            print(f"Received R4: {time.strftime('%H:%M:%S')}")
+            print(f"Received R4: {time.strftime('%H:%M:%S')} \n")
 
             #Wait before next S4 to avoid spamming
             await asyncio.sleep(30)
@@ -302,9 +305,9 @@ async def send_payloads():
             f"cmd=lsrr;id={eid};e=1;pid=14001;clientid={clientid};domain=Comm.ts;s=NaN;ts={get_timestamp()};xs={get_xs()}"
         )
         await websocket.send(encode_payload(s7_payload))
-        #print(f"Sent S7: {s7_payload}")
+        print(f"Sent S7: {time.strftime('%H:%M:%S')}")
         r7 = await websocket.recv()
-        print(f"Received R7: at {time.strftime('%H:%M:%S')} ")
+        print(f"Received R7: at {time.strftime('%H:%M:%S')} \n")
 
         decoded_r7 = str(base64.b64decode(r7))
         parts = dict(kv.split("=", 1) for kv in decoded_r7.split(";") if "=" in kv)
@@ -334,7 +337,9 @@ async def send_payloads():
         while True:
             """loop to keep sending s5,s4 and s7 payloads"""
             #=== Send S5/on_evda ===
-
+            if int(time.time()) < int(start):
+                await asyncio.sleep(int(start)- int(time.time())) #wait for the time for the next on_evda to reach
+                
             s5_payload = (
                 f"cmd=on_evda;pid=14001;val={get_next_event_val(2,0)};gid=gl;gevid=14;min=2;"
                 f"oddset={json.dumps(oddset_json, separators=(',', ':'))};"
@@ -343,7 +348,7 @@ async def send_payloads():
             await websocket.send(encode_payload(s5_payload))
             print(f"Sent S5 (on_evda data) {time.strftime('%H:%M:%S')}")
             r5 = await websocket.recv()
-            print(f"Received R5: ")
+            print(f"Received R5: \n")
             #payload = extract_onevda_data(r5) #extract live odds for the game eid
             decoded5 = base64.b64decode(r5).decode()
             eid, start = extract_eid_and_start(decoded5)
@@ -351,16 +356,15 @@ async def send_payloads():
             #     json.dump(extract_onevda_data(str(r5)), f, indent=4)
             # parsed_onevda_data = extract_onevda_data(str(r5))
             time2wait = int(start)-time.time()
-            print(f"EID: {eid}, START: {start}")
-            print(f"time to wait: {time2wait}s")
-
+            print(f"EID: {eid}, START: {start} | time to wait: {time2wait}s")
+            
 
 
             # Assume S6 has already been sent/received above
 
             # Calculate time2wait from R5 earlier
             time2wait = int(start) - time.time() +7
-            print(f"Time to wait after S6: {time2wait:.2f}s")
+            print(f"Time to wait for next tss: {time2wait:.2f}s")
 
             #Keep sending S4 if time2wait > 30s
             while time2wait > 30:
@@ -370,7 +374,7 @@ async def send_payloads():
                 await websocket.send(encode_payload(s4_payload))
                 print(f"Sent S4/tss : ")
                 r4 = await websocket.recv()
-                print(f"Received R4: {time.strftime('%H:%M:%S')}")
+                print(f"Received R4: {time.strftime('%H:%M:%S')} \n")
 
                 #Wait before next S4 to avoid spamming
                 await asyncio.sleep(30)
@@ -387,12 +391,11 @@ async def send_payloads():
             #     print(float(start)-time.time() +3.0 )
 
 
-            print(time.strftime("%H:%M:%S"))
             s7_payload = (
                 f"cmd=lsrr;id={eid};e=1;pid=14001;clientid={clientid};domain=Comm.ts;s=NaN;ts={get_timestamp()};xs={get_xs()}"
             )
             await websocket.send(encode_payload(s7_payload))
-            #print(f"Sent S7: {s7_payload}")
+            print(f"Sent S7: {time.strftime('%H:%M:%S')}")
             r7 = await websocket.recv()
             print(f"Received R7: at {time.strftime('%H:%M:%S')} ")
 
