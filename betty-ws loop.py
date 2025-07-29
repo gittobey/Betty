@@ -250,9 +250,9 @@ async def send_payloads():
         #payload = extract_onevda_data(r5) #extract live odds for the game eid
         decoded5 = base64.b64decode(r5).decode()
         eid, start = extract_eid_and_start(decoded5)
-        with open(f"evda{eid}.json", "w") as f:
-            json.dump(extract_onevda_data(str(r5)), f, indent=4)
-        parsed_onevda_data = extract_onevda_data(str(r5))
+        # with open(f"evda{eid}.json", "w") as f:
+        #     json.dump(extract_onevda_data(str(r5)), f, indent=4)
+        # parsed_onevda_data = extract_onevda_data(str(r5))
         time2wait = int(start)-time.time()
         print(f"EID: {eid}, START: {start}")
         print(f"time to wait: {time2wait}s")
@@ -347,9 +347,9 @@ async def send_payloads():
             #payload = extract_onevda_data(r5) #extract live odds for the game eid
             decoded5 = base64.b64decode(r5).decode()
             eid, start = extract_eid_and_start(decoded5)
-            with open(f"evda{eid}.json", "w") as f:
-                json.dump(extract_onevda_data(str(r5)), f, indent=4)
-            parsed_onevda_data = extract_onevda_data(str(r5))
+            # with open(f"evda{eid}.json", "w") as f:
+            #     json.dump(extract_onevda_data(str(r5)), f, indent=4)
+            # parsed_onevda_data = extract_onevda_data(str(r5))
             time2wait = int(start)-time.time()
             print(f"EID: {eid}, START: {start}")
             print(f"time to wait: {time2wait}s")
