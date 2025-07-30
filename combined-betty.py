@@ -1,4 +1,4 @@
-from seleniumwire import webdriver  # pip install selenium-wire
+from selenium import webdriver  # pip install selenium-wire
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
@@ -211,11 +211,11 @@ driver.maximize_window()
 wait = WebDriverWait(driver, 15)
 
 username_field = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[autocomplete='username']")))
-username_field.send_keys("")  # ✍️ Replace with your username
+username_field.send_keys("bet9jaweb8")  # ✍️ Replace with your username
 print("[+] Entered username!")
 
 password_field = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[autocomplete='current-password']")))
-password_field.send_keys("")  # ✍️ Replace with your password
+password_field.send_keys("Newpassword1")  # ✍️ Replace with your password
 print("[+] Entered password!")
 
 # try:
@@ -233,13 +233,13 @@ login_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.b
 login_button.click()
 print("[+] Clicked login button!")
 
-time.sleep(5)
-while True:
-    command = input("Type 'exit' to close the browser: ").strip().lower()
-    if command == "exit":
-        print("[*] Exiting and closing the browser...")
-        driver.quit()
-        break
+# time.sleep(5)
+# while True:
+#     command = input("Type 'exit' to close the browser: ").strip().lower()
+#     if command == "exit":
+#         print("[*] Exiting and closing the browser...")
+#         driver.quit()
+#         break
 
 span = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="iconslider_1549_league_element"]/div/div[1]/span')))
 # Click the span
@@ -268,11 +268,11 @@ async def send_payloads():
         # === Send S1 ===
         s1_payload = f"cmd=begin;clientid=;domain=Comm.ts;s=NaN;ts={get_timestamp()};xs={get_xs()}"
         await websocket.send(encode_payload(s1_payload))
-        print(f"Sent S1: {s1_payload}")
+        print(f"Sent S1: ")
 
         r1 = await websocket.recv()
         r1_decoded = decode_payload(r1)
-        print(f"Received R1: {r1_decoded}")
+        print(f"Received R1: \n")
 
         # === Extract clientid ===
         clientid = ""
@@ -290,25 +290,25 @@ async def send_payloads():
             f"clientid={clientid};domain=Comm.ts;s=NaN;ts={get_timestamp()};xs={get_xs()}"
         )
         await websocket.send(encode_payload(s2_payload))
-        print(f"Sent S2: {s2_payload}")
+        print(f"Sent S2: ")
 
         r2 = await websocket.recv()
-        print(f"Received R2: {decode_payload(r2)}")
+        print(f"Received R2: \n")
 
         # === Send S3 ===
-        p = "b03eb54de7ace161878c9da0edeb33f9" #changes with time,usually expires gotten from headers to vsmobile
+        p = "2b4063bed18197c832c932681124894d" #changes with time,usually expires gotten from headers to vsmobile
         id_ = "427003"
         pid = "14001"
         s3_payload = (
             f"cmd=pl;id={id_};p={p};pid={pid};clientid={clientid};domain=Comm.ts;s=NaN;ts={get_timestamp()};xs={get_xs()}"
         )
         await websocket.send(encode_payload(s3_payload))
-        print(f"Sent S3: {s3_payload}")
+        print(f"Sent S3: ")
 
         r3 = await websocket.recv()
-        print(f"Received R3: {r3}")
+        print(f"Received R3: \n")
 
-        # === Send S4 ===
+        # === Send S4/tss ===
         s4_payload = (
             f"cmd=tss;clientid={clientid};domain=Comm.ts;"
             f"s=NaN;ts={get_timestamp()};xs={get_xs()}"
@@ -317,10 +317,10 @@ async def send_payloads():
         print(f"Sent S4: {time.strftime('%H:%M:%S')}")
 
         r4 = await websocket.recv()
-        print(f"Received R4: {time.strftime('%H:%M:%S')}")
+        print(f"Received R4: {time.strftime('%H:%M:%S')} \n")
 
-        #=== Send S5 ===
 
+        #=== Send S5/on_evda ===
 
         s5_payload = (
             f"cmd=on_evda;pid=14001;val={get_next_event_val(2,0)};gid=gl;gevid=14;min=2;"
@@ -330,31 +330,31 @@ async def send_payloads():
         await websocket.send(encode_payload(s5_payload))
         print(f"Sent S5 (on_evda data) {time.strftime('%H:%M:%S')}")
         r5 = await websocket.recv()
-        print(f"Received R5: ")
+        print(f"Received R5: \n")
         #payload = extract_onevda_data(r5) #extract live odds for the game eid
         decoded5 = base64.b64decode(r5).decode()
         eid, start = extract_eid_and_start(decoded5)
-        with open(f"evda{eid}.json", "w") as f:
-            json.dump(extract_onevda_data(str(r5)), f, indent=4)
-        parsed_onevda_data = extract_onevda_data(str(r5))
+        # with open(f"evda{eid}.json", "w") as f:
+        #     json.dump(extract_onevda_data(str(r5)), f, indent=4)
+        # parsed_onevda_data = extract_onevda_data(str(r5))
         time2wait = int(start)-time.time()
-        print(f"EID: {eid}, START: {start}")
-        print(f"time to wait: {time2wait}s")
+        print(f"EID: {eid}, START: {start} time to wait: {time2wait}s \n")
+
 
         # === Send S6 ===
         s6_payload = (
             f"cmd=ot2;l=20;c=1;pid=14001,14003,14011,14012,14014,14015,14016,14017;ft=0;ftt=0;clientid={clientid};domain=Comm.ts;s=NaN;ts={get_timestamp()};xs={get_xs()}"
         )
         await websocket.send(encode_payload(s6_payload))
-        print(f"Sent S6 (ot2): {s6_payload}")
+        print(f"Sent S6 (ot2): ")
         r6 = await websocket.recv()
-        print(f"Received R6: {time.strftime('%H:%M:%S')}")
+        print(f"Received R6: \n")
 
         # Assume S6 has already been sent/received above
 
         # Calculate time2wait from R5 earlier
         time2wait = int(start) - time.time() +7
-        print(f"Time to wait after S6: {time2wait:.2f}s")
+        print(f"Time to wait after S6: {time2wait:.2f}s \n")
 
         #Keep sending S4 if time2wait > 30s
         while time2wait > 30:
@@ -362,15 +362,15 @@ async def send_payloads():
                 f"cmd=tss;clientid={clientid};domain=Comm.ts;s=NaN;ts={get_timestamp()};xs={get_xs()}"
             )
             await websocket.send(encode_payload(s4_payload))
-            print(f"Sent S4: {s4_payload}")
+            print(f"Sent S4/tss : ")
             r4 = await websocket.recv()
-            print(f"Received R4: {time.strftime('%H:%M:%S')}")
+            print(f"Received R4: {time.strftime('%H:%M:%S')} \n")
 
             #Wait before next S4 to avoid spamming
             await asyncio.sleep(30)
 
             #Recalculate time2wait
-            time2wait = int(start) - time.time()
+            time2wait = int(start) - time.time() # or time2wait -30
             print(f"Updated time2wait: {time2wait:.2f}s")
 
 
@@ -386,9 +386,9 @@ async def send_payloads():
             f"cmd=lsrr;id={eid};e=1;pid=14001;clientid={clientid};domain=Comm.ts;s=NaN;ts={get_timestamp()};xs={get_xs()}"
         )
         await websocket.send(encode_payload(s7_payload))
-        #print(f"Sent S7: {s7_payload}")
+        print(f"Sent S7: {time.strftime('%H:%M:%S')}")
         r7 = await websocket.recv()
-        print(f"Received R7: at {time.strftime('%H:%M:%S')} ")
+        print(f"Received R7: at {time.strftime('%H:%M:%S')} \n")
 
         decoded_r7 = str(base64.b64decode(r7))
         parts = dict(kv.split("=", 1) for kv in decoded_r7.split(";") if "=" in kv)
@@ -406,53 +406,174 @@ async def send_payloads():
             print("Failed to parse JSON:", e)
             print("Decoded string:", decoded_str)
 
-        global  outcome_list
+        
         outcome_list = return_match_outcome(parsed_lsrr_data, 0)
-        print(outcome_list)
-        # with open(f"lssr_data{eid}.json", "w") as f:
+        print(f"Result for {eid}: {outcome_list}")        # with open(f"lssr_data{eid}.json", "w") as f:
         #     json.dump((parsed_lsrr_data), f, indent=4)
+
+
+        # NAvigate games and place a bet
+        for element_id in outcome_list[:5]:  # only the first 4 items
+            try:
+                element = driver.find_element(By.ID, element_id)
+                driver.execute_script("arguments[0].click();", element)
+            except Exception as e:
+                print(f"Failed to click {element_id}: {e}")
+
+        try:
+            bet_button = driver.find_element(By.ID, "button_bet_ticket")
+            driver.execute_script("arguments[0].click();", bet_button)
+        except NoSuchElementException:
+            # Fallback to clicking the menu icon
+            try:
+                menu_button = driver.find_element(By.CLASS_NAME, "icon-menu")
+                driver.execute_script("arguments[0].click();", menu_button)
+            except NoSuchElementException:
+                print("Both bet button and menu icon were not found.")
+
+
+        driver.execute_script("arguments[0].click();", (driver.find_element(By.ID, "button_bet")))
+
+        try:
+            bet_button = driver.find_element(By.ID, "button_bet_ticket")
+
+            # Remove 'disabled' attribute
+            driver.execute_script("arguments[0].removeAttribute('disabled');", bet_button)
+
+            # Click it after enabling
+            driver.execute_script("arguments[0].click();", bet_button)
+
+        except Exception as e:
+            print(f"Failed to enable and click bet button: {e}")
+        #submit odds
+        driver.execute_script("arguments[0].click();", (driver.find_element(By.ID, "button_bet_ticket")))
+
+
+
+
+
+
+        #for this to work with the selenium part it the nav to bet part would come inside the asyncio function
+        while True:
+            """loop to keep sending s5,s4 and s7 payloads"""
+            #=== Send S5/on_evda ===
+            if int(time.time()) < int(start):
+                await asyncio.sleep(int(start)- int(time.time())) #wait for the time for the next on_evda to reach
+                
+            s5_payload = (
+                f"cmd=on_evda;pid=14001;val={get_next_event_val(2,0)};gid=gl;gevid=14;min=2;"
+                f"oddset={json.dumps(oddset_json, separators=(',', ':'))};"
+                f"clientid={clientid};domain=Comm.ts;s=NaN;ts={get_timestamp()};xs={get_xs()}"
+            )
+            await websocket.send(encode_payload(s5_payload))
+            print(f"Sent S5 (on_evda data) {time.strftime('%H:%M:%S')}")
+            r5 = await websocket.recv()
+            print(f"Received R5: \n")
+            #payload = extract_onevda_data(r5) #extract live odds for the game eid
+            decoded5 = base64.b64decode(r5).decode()
+            eid, start = extract_eid_and_start(decoded5)
+
+
+            # Calculate time2wait from R5 earlier
+            time2wait = int(start) - time.time() +7
+            print(f"Time to wait for next tss: {time2wait:.2f}s \n")
+
+
+
+
+            #Keep sending S4 if time2wait > 30s
+            while time2wait > 30:
+                s4_payload = (
+                    f"cmd=tss;clientid={clientid};domain=Comm.ts;s=NaN;ts={get_timestamp()};xs={get_xs()}"
+                )
+                await websocket.send(encode_payload(s4_payload))
+                print(f"Sent S4/tss : ")
+                r4 = await websocket.recv()
+                print(f"Received R4: {time.strftime('%H:%M:%S')} \n")
+
+                #Wait before next S4 to avoid spamming
+                await asyncio.sleep(30)
+
+                #Recalculate time2wait
+                time2wait = int(start) - time.time() # or time2wait -30
+                print(f"Updated time2wait: {time2wait:.2f}s")
+
+
+            #When time2wait is <= 30, send S7
+            await asyncio.sleep(time2wait-5) #lsrr is sent 113s after on_evda start
+            #print(f"{start}\n {time.time()}")
+            # while time.time() <= float(start)+3.0:
+            #     print(float(start)-time.time() +3.0 )
+
+
+            s7_payload = (
+                f"cmd=lsrr;id={eid};e=1;pid=14001;clientid={clientid};domain=Comm.ts;s=NaN;ts={get_timestamp()};xs={get_xs()}"
+            )
+            await websocket.send(encode_payload(s7_payload))
+            print(f"Sent S7: {time.strftime('%H:%M:%S')}")
+            r7 = await websocket.recv()
+            print(f"Received R7: at {time.strftime('%H:%M:%S')} ")
+
+            decoded_r7 = str(base64.b64decode(r7))
+            parts = dict(kv.split("=", 1) for kv in decoded_r7.split(";") if "=" in kv)
+            base64_data = parts.get("data")
+
+            # Step 2: Base64 decode (handling URL-safe characters if present)
+            decoded_bytes = base64.b64decode(base64_data)
+            decoded_str = decoded_bytes.decode('utf-8')
+
+            # Step 3: Attempt to load as JSON
+            try:
+                parsed_lsrr_data = json.loads(decoded_str)
+                #print("Parsed JSON:", parsed_data)
+            except json.JSONDecodeError as e:
+                print("Failed to parse JSON:", e)
+                print("Decoded string:", decoded_str)
+
+            
+            outcome_list = return_match_outcome(parsed_lsrr_data, 0)
+            print(f"Result for {eid}: {outcome_list}")
+
+            
+            
+            # NAvigate games and place a bet
+            for element_id in outcome_list[:5]:  # only the first 4 items
+                try:
+                    element = driver.find_element(By.ID, element_id)
+                    driver.execute_script("arguments[0].click();", element)
+                except Exception as e:
+                    print(f"Failed to click {element_id}: {e}")
+
+            try:
+                bet_button = driver.find_element(By.ID, "button_bet_ticket")
+                driver.execute_script("arguments[0].click();", bet_button)
+            except NoSuchElementException:
+                # Fallback to clicking the menu icon
+                try:
+                    menu_button = driver.find_element(By.CLASS_NAME, "icon-menu")
+                    driver.execute_script("arguments[0].click();", menu_button)
+                except NoSuchElementException:
+                    print("Both bet button and menu icon were not found.")
+
+
+            driver.execute_script("arguments[0].click();", (driver.find_element(By.ID, "button_bet")))
+
+            try:
+                bet_button = driver.find_element(By.ID, "button_bet_ticket")
+
+                # Remove 'disabled' attribute
+                driver.execute_script("arguments[0].removeAttribute('disabled');", bet_button)
+
+                # Click it after enabling
+                driver.execute_script("arguments[0].click();", bet_button)
+
+            except Exception as e:
+                print(f"Failed to enable and click bet button: {e}")
+            #submit odds
+            driver.execute_script("arguments[0].click();", (driver.find_element(By.ID, "button_bet_ticket")))
+
 
 # === Run the main function ===
 asyncio.run(send_payloads())
 
-for element_id in outcome_list[:5]:  # only the first 4 items
-    try:
-        element = driver.find_element(By.ID, element_id)
-        driver.execute_script("arguments[0].click();", element)
-    except Exception as e:
-        print(f"Failed to click {element_id}: {e}")
 
-try:
-    bet_button = driver.find_element(By.ID, "button_bet_ticket")
-    driver.execute_script("arguments[0].click();", bet_button)
-except NoSuchElementException:
-    # Fallback to clicking the menu icon
-    try:
-        menu_button = driver.find_element(By.CLASS_NAME, "icon-menu")
-        driver.execute_script("arguments[0].click();", menu_button)
-    except NoSuchElementException:
-        print("Both bet button and menu icon were not found.")
-
-
-driver.execute_script("arguments[0].click();", (driver.find_element(By.ID, "button_bet")))
-
-try:
-    bet_button = driver.find_element(By.ID, "button_bet_ticket")
-
-    # Remove 'disabled' attribute
-    driver.execute_script("arguments[0].removeAttribute('disabled');", bet_button)
-
-    # Click it after enabling
-    driver.execute_script("arguments[0].click();", bet_button)
-
-except Exception as e:
-    print(f"Failed to enable and click bet button: {e}")
-#submit odds
-# driver.execute_script("arguments[0].click();", (driver.find_element(By.ID, "button_bet_ticket")))
-
-while True:
-    command = input("Type 'exit' to close the browser: ").strip().lower()
-    if command == "exit":
-        print("[*] Exiting and closing the browser...")
-        driver.quit()
-        break
